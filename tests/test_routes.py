@@ -146,3 +146,11 @@ class TestAccountService(TestCase):
         response = self.client.get(f"{BASE_URL}/{0}",content_type="aplication/json")
         self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
     
+    @app.route("/accounts/<int:id>", methods=["PUT"])
+    def update_account(id):
+        account = Account.find(id)
+        if not account:
+            abort(status.HTTP_404_NOT_FOUND, f"Account with id [{id}] could not be found.")
+        account.deserialize(request.get_json())
+        account.update()
+        return account.serialize(), status.HTTP_200_OK
