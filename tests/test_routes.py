@@ -138,32 +138,32 @@ class TestAccountService(TestCase):
         )
         new_account = response.get_json()
         account.id = new_account["id"]
-        response = self.client.get(f"{BASE_URL}/{account.id}",content_type="aplication/json")
-        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="aplication/json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(account.name, data["name"])
 
     def test_account_not_found(self):
         """It should test reading a nonexisting account"""
-        response = self.client.get(f"{BASE_URL}/{0}",content_type="aplication/json")
-        self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
-    
+        response = self.client.get(f"{BASE_URL}/{0}", content_type="aplication/json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_update_an_account(self):
         """It should Update a single Account"""
         account = AccountFactory()
         response = self.client.post(BASE_URL, json=account.serialize())
         self.assertEqual(
            response.status_code,
-            status.HTTP_201_CREATED,
+           status.HTTP_201_CREATED,
            "Could not create test Account",
         )
-        new_account=response.get_json()
+        new_account = response.get_json()
         new_account["name"] = "John Doe"
         response = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_account = response.get_json()
         self.assertEqual(updated_account["name"], "John Doe")
-    
+
     def test_update_account_not_found(self):
         """It should test Update a nonexisting account"""
         response = self.client.put(f"{BASE_URL}/{0}", json=[])
@@ -175,7 +175,7 @@ class TestAccountService(TestCase):
         response = self.client.post(BASE_URL, json=account.serialize())
         self.assertEqual(
            response.status_code,
-            status.HTTP_201_CREATED,
+           status.HTTP_201_CREATED,
            "Could not create test Account",
         )
         data = response.get_json()
@@ -185,11 +185,11 @@ class TestAccountService(TestCase):
 
     def test_list_accounts(self):
         """It should List all accounts"""
-        accounts=self._create_accounts(5)
+        accounts = self._create_accounts(5)
         resp = self.client.get(BASE_URL, content_type="aplication/json")
-        self.assertEqual(resp.status_code,status.HTTP_200_OK)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         retr_accounts = resp.get_json()
-        self.assertEqual(len(accounts),len(retr_accounts))
+        self.assertEqual(len(accounts), len(retr_accounts))
 
     def test_method_not_allowed(self):
         """It should not allow an illegal method call"""
@@ -213,4 +213,4 @@ class TestAccountService(TestCase):
         """It should return a CORS header"""
         resp = self.client.get('/', environ_overrides=HTTPS_ENVIRON)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp.headers.get('Access-Control-Allow-Origin'),'*')
+        self.assertEqual(resp.headers.get('Access-Control-Allow-Origin'), '*')
